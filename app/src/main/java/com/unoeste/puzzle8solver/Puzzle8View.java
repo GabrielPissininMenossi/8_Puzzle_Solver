@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Puzzle8View extends View
 {
-    private float lado;
+    private float lado, grade, largura, altura;
 
     public Puzzle8View(Context context, @Nullable AttributeSet attrs)
     {
@@ -53,16 +53,21 @@ public class Puzzle8View extends View
 
 
 
-        int i = 0;
+        int i = 0, linha, coluna;
+        float x, y;
         Estado estado;
         while (i < MainActivity.estadoList.size())
         {
+            linha = i / 3;
+            coluna = i % 3;
+            x = largura + (coluna * lado);
+            y = altura + (linha * lado);
             estado = MainActivity.estadoList.get(i);
-            if (estado.getNum() != 9)
+            if (estado.getNum() != 0)
             {
-                canvas.drawRect(estado.getX(), estado.getY(), estado.getX() + lado, estado.getY() + lado, paint);
-                canvas.drawRect(estado.getX(), estado.getY(), estado.getX() + lado, estado.getY() + lado, paintBorda);
-                canvas.drawText("" + estado.getNum(), estado.getX() + lado/2, estado.getY()+ lado/2 + 50, textPaint);
+                canvas.drawRect(x, y, x + lado, y + lado, paint);
+                canvas.drawRect(x, y, x + lado, y + lado, paintBorda);
+                canvas.drawText("" + estado.getNum(), x + lado/2, y + lado/2 + 50, textPaint);
             }
             i++;
 
@@ -73,9 +78,9 @@ public class Puzzle8View extends View
         MainActivity.estadoList.clear();
         int num;
         Estado estado;
-        float largura, altura, grade, x, y;
+        float x, y;
         grade = Math.min(getWidth(), getHeight()) - 200; // tamanho da grade
-        lado = grade / 3f;
+        lado = grade / 3;
         largura = (getWidth() - grade) /2f;
         altura = (getHeight() - grade) /2f;
         List<Integer> auxList = new ArrayList<>();
@@ -83,9 +88,9 @@ public class Puzzle8View extends View
         {
             for (int j = 0; j < 3; j++)
             {
-                num = (int)(Math.random() * 9) + 1;
+                num = (int)(Math.random() * 9);
                 while (auxList.contains(num))
-                    num = (int)(Math.random() * 9) + 1;
+                    num = (int)(Math.random() * 9);
                 auxList.add(num);
                 x = largura + (j * lado); // coluna
                 y = altura + (i * lado); // linha
@@ -95,4 +100,35 @@ public class Puzzle8View extends View
         }
         invalidate();
     }
+    private Estado buscarEstado(int num)
+    {
+        int i = 0;
+        while (i < MainActivity.estadoList.size() && MainActivity.estadoList.get(i).getNum() != num)
+            i++;
+        if (i < MainActivity.estadoList.size()) // achou
+            return MainActivity.estadoList.get(i);
+        else
+            return null;
+    }
+    public void trocarEstados()
+    {
+        int i = 0, pos;
+        while (i < MainActivity.estadoAtual.size())
+        {
+            if (MainActivity.estadoList.get(i).getNum() != MainActivity.estadoAtual.get(i)) // se for diferente, preciso trocar
+            {
+                Estado aux = buscarEstado(MainActivity.estadoAtual.get(i));
+
+                if (aux != null)
+                {
+                    pos = MainActivity.estadoList.indexOf(aux);
+                    MainActivity.estadoList.set(pos, MainActivity.estadoList.get(i));
+                    MainActivity.estadoList.set(i, aux);
+                }
+            }
+            i++;
+        }
+        invalidate();
+    }
+
 }

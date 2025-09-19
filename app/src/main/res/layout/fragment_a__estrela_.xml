@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".A_Estrela_Fragment">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="#4E696969"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
+
+        <TextView
+            android:id="@+id/tvEstadoFinal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|right"
+
+            android:layout_margin="10dp"
+            android:textAlignment="center"
+            android:textColor="#9f90ea"
+            android:textSize="20sp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <com.unoeste.puzzle8solver.Puzzle8View
+        android:id="@+id/puzzle8View"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btEmbaralhar"
+        android:layout_width="110dp"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="15dp"
+        android:backgroundTint="#2f2c79"
+        android:fontFamily="casual"
+        android:stateListAnimator="@null"
+        android:text="Rand"
+        android:textColor="#F0F0F0"
+        android:textSize="18sp"
+        app:rippleColor="@android:color/transparent" />
+
+    <Button
+        android:id="@+id/btBusca_Estrela"
+        android:layout_width="110dp"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginLeft="150dp"
+        android:layout_marginBottom="15dp"
+        android:backgroundTint="#2f2c79"
+        android:fontFamily="casual"
+        android:stateListAnimator="@null"
+        android:text="A*"
+        android:textColor="#F0F0F0"
+        android:textSize="18sp"
+        app:rippleColor="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="140dp"
+        android:fontFamily="casual"
+        android:text="Runtime Duration:"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvCaminhoSolucao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="140dp"
+        android:layout_marginTop="200dp"
+        android:fontFamily="casual"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTempoGasto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="185dp"
+        android:layout_marginTop="140dp"
+        android:fontFamily="casual"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvQtdePassos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="170dp"
+        android:layout_marginTop="170dp"
+        android:fontFamily="casual"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="170dp"
+        android:fontFamily="casual"
+        android:text="Nodes Expanded:"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="200dp"
+        android:fontFamily="casual"
+        android:text="Path to Goal:"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</FrameLayout>

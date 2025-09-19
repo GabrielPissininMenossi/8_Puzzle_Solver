@@ -2,6 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/it_distanciaManhattan"
+        android:title="Distância Manhattan" />
+    <item
+        android:id="@+id/it_pecasForaLugar"
+        android:title="Peças Fora do Lugar" />
+    <item
+        android:id="@+id/it_nivel1"
+        android:title="1º Nivel" />
+    <item
+        android:id="@+id/it_nivel2"
+        android:title="2º Nivel" />
+    <item
         android:id="@+id/it_final"
         android:title="Entrada Final" />
 </menu>

@@ -20,8 +20,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +43,8 @@ public class A_Estrela_Fragment extends Fragment {
     static List<Estado> estadoList = new ArrayList<>();
     static List<Integer> estadoAtual = new ArrayList<>();
     static List<Integer> estadoFinal = new ArrayList<>(Arrays.asList(0,1,2,3,4,5,6,7,8)); // estado final padrão
-    private LinkedList<Tabuleiro> fila = new LinkedList();
+    private LinkedList<Tabuleiro> fila = new LinkedList(); // fila com insercao direta com proridade o(n)
+    private PriorityQueue<Tabuleiro> filaHeap = new PriorityQueue<>(Comparator.comparingInt(Tabuleiro::getF)); // fila com heap sort, o(log n)
     private LinkedList<Tabuleiro> caminho = new LinkedList<>();
     private Tabuleiro ultimoEstado;
     private Puzzle8View puzzle8View;
@@ -127,7 +130,8 @@ public class A_Estrela_Fragment extends Fragment {
         btBusca_Estrela.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fila.clear();
+                //fila.clear();
+                filaHeap.clear();
                 estadoAtual.clear();
                 caminho.clear();
                 ultimoEstado = null;
@@ -331,8 +335,9 @@ public class A_Estrela_Fragment extends Fragment {
             novoEstadoTabuleiro.setG(pai.getG() + 1);
             novoEstadoTabuleiro.setH(calcularDistanciaManhattan(novoEstadoTabuleiro.getEstado()));
             novoEstadoTabuleiro.setF(novoEstadoTabuleiro.getG() + novoEstadoTabuleiro.getH());
-            insercaoDiretaPrioridade(novoEstadoTabuleiro);
-            qtdePassos++;
+            //insercaoDiretaPrioridade(novoEstadoTabuleiro);
+            filaHeap.add(novoEstadoTabuleiro);
+            //qtdePassos++;
         }
 
     }
@@ -397,15 +402,18 @@ public class A_Estrela_Fragment extends Fragment {
         estadoTabuleiro.setG(0);
         estadoTabuleiro.setF(estadoTabuleiro.getG() + estadoTabuleiro.getH());
         estadoTabuleiro.setPai(null);
-        insercaoDiretaPrioridade(estadoTabuleiro);
-        qtdePassos++;
-        while (!fila.isEmpty() && flagFim != 1)
+        //insercaoDiretaPrioridade(estadoTabuleiro);
+        filaHeap.add(estadoTabuleiro);
+        //qtdePassos++;
+        while (!filaHeap.isEmpty() && flagFim != 1)
         {
             //Toast.makeText(this, "entrei", Toast.LENGTH_SHORT).show();
-            estadoTabuleiro = fila.removeFirst();
+            //estadoTabuleiro = fila.removeFirst();
+            estadoTabuleiro = filaHeap.poll();
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
                 visitados.add(estadoTabuleiro);
+                qtdePassos++;
                 //Toast.makeText(this, "entrei", Toast.LENGTH_SHORT).show();
                 if (!estadoTabuleiro.getEstado().equals(estadoFinal))
                 {

@@ -43,7 +43,7 @@ public class A_Estrela_Fragment extends Fragment {
     static List<Estado> estadoList = new ArrayList<>();
     static List<Integer> estadoAtual = new ArrayList<>();
     static List<Integer> estadoFinal = new ArrayList<>(Arrays.asList(0,1,2,3,4,5,6,7,8)); // estado final padrão
-    private LinkedList<Tabuleiro> fila = new LinkedList(); // fila com insercao direta com proridade o(n)
+    private List<Tabuleiro> fila = new ArrayList<>(); // fila com prioridade o(n)
     private PriorityQueue<Tabuleiro> filaHeap = new PriorityQueue<>(Comparator.comparingInt(Tabuleiro::getF)); // fila com heap sort, o(log n)
     private LinkedList<Tabuleiro> caminho = new LinkedList<>();
     private Tabuleiro ultimoEstado;
@@ -51,8 +51,8 @@ public class A_Estrela_Fragment extends Fragment {
     private TextView tvEstadoFinal;
     private Button btEmbaralhar, btBusca_Estrela;
     private Long startTime, endTime;
-    private int qtdePassos = 0, tamanhoCaminho = 0;
-    private TextView tvTempoGasto, tvCaminhoSolucao, tvQtdePassos;
+    private int qtdePassos = 0, tamanhoCaminho = 0, flagDistManhattan = 1, flagPecaForaLugar = 0, flagNivel1 = 1, flagNivel2 = 0;
+    private TextView tvTempoGasto, tvCaminhoSolucao, tvQtdePassos, tvNivel, tvFuncaoAvaliativa;
     private final int TEMPO = 500;
     MainActivity mainActivity;
 
@@ -91,6 +91,30 @@ public class A_Estrela_Fragment extends Fragment {
         {
             estadoFinal();
         }
+        if (item.getItemId() == R.id.it_nivel1)
+        {
+            flagNivel1 = 1;
+            flagNivel2 = 0;
+            tvNivel.setText("1º Nível");
+        }
+        if (item.getItemId() == R.id.it_nivel2)
+        {
+            flagNivel1 = 0;
+            flagNivel2 = 1;
+            tvNivel.setText("2º Nível");
+        }
+        if (item.getItemId() == R.id.it_distanciaManhattan)
+        {
+            flagDistManhattan = 1;
+            flagPecaForaLugar = 0;
+            tvFuncaoAvaliativa.setText("Distância Manhattan");
+        }
+        if (item.getItemId() == R.id.it_pecasForaLugar)
+        {
+            flagPecaForaLugar = 1;
+            flagDistManhattan = 0;
+            tvFuncaoAvaliativa.setText("Peças Fora do Lugar");
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -120,6 +144,8 @@ public class A_Estrela_Fragment extends Fragment {
         tvCaminhoSolucao = view.findViewById(R.id.tvCaminhoSolucao);
         tvTempoGasto = view.findViewById(R.id.tvTempoGasto);
         tvQtdePassos = view.findViewById(R.id.tvQtdePassos);
+        tvNivel = view.findViewById(R.id.tvNivel);
+        tvFuncaoAvaliativa = view.findViewById(R.id.tvFuncaoAvaliativa);
         tvEstadoFinal.setText(estadoFinal.toString());
         btEmbaralhar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +201,6 @@ public class A_Estrela_Fragment extends Fragment {
         });
         return view;
     }
-
     private void estadoFinal()
     {
         EditText input = new EditText(getContext());
@@ -251,12 +276,9 @@ public class A_Estrela_Fragment extends Fragment {
                     estadoAux = fila.get(i);
                     fila.set(i, fila.get(j));
                     fila.set(j, estadoAux);
-
                 }
-
             }
         }
-
     }
     private void insercaoDiretaPrioridade(Tabuleiro novo)
     {
@@ -333,11 +355,17 @@ public class A_Estrela_Fragment extends Fragment {
         {
             novoEstadoTabuleiro.setPai(pai);
             novoEstadoTabuleiro.setG(pai.getG() + 1);
-            novoEstadoTabuleiro.setH(calcularDistanciaManhattan(novoEstadoTabuleiro.getEstado()));
+            if (flagDistManhattan == 1)
+            {
+                novoEstadoTabuleiro.setH(calcularDistanciaManhattan(novoEstadoTabuleiro.getEstado()));
+            }
+            else
+            {
+                novoEstadoTabuleiro.setH(contarPecasFora( novoEstadoTabuleiro.getEstado()));
+            }
             novoEstadoTabuleiro.setF(novoEstadoTabuleiro.getG() + novoEstadoTabuleiro.getH());
             //insercaoDiretaPrioridade(novoEstadoTabuleiro);
             filaHeap.add(novoEstadoTabuleiro);
-            //qtdePassos++;
         }
 
     }
@@ -396,30 +424,31 @@ public class A_Estrela_Fragment extends Fragment {
     {
         startTime = System.currentTimeMillis();
         List<Tabuleiro> visitados = new ArrayList<>();
-        int flagD = 0, flagE = 0, flagB = 0, flagC = 0, flagFim = 0;
+        int flagFim = 0;
         Tabuleiro estadoTabuleiro = new Tabuleiro(estadoAtual);
-        estadoTabuleiro.setH(calcularDistanciaManhattan(estadoTabuleiro.getEstado()));
+        if (flagDistManhattan == 1)
+        {
+            estadoTabuleiro.setH(calcularDistanciaManhattan(estadoTabuleiro.getEstado()));
+        }
+        else
+        {
+            estadoTabuleiro.setH(contarPecasFora(estadoTabuleiro.getEstado()));
+        }
         estadoTabuleiro.setG(0);
         estadoTabuleiro.setF(estadoTabuleiro.getG() + estadoTabuleiro.getH());
         estadoTabuleiro.setPai(null);
         //insercaoDiretaPrioridade(estadoTabuleiro);
         filaHeap.add(estadoTabuleiro);
-        //qtdePassos++;
         while (!filaHeap.isEmpty() && flagFim != 1)
         {
-            //Toast.makeText(this, "entrei", Toast.LENGTH_SHORT).show();
-            //estadoTabuleiro = fila.removeFirst();
             estadoTabuleiro = filaHeap.poll();
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
                 visitados.add(estadoTabuleiro);
                 qtdePassos++;
-                //Toast.makeText(this, "entrei", Toast.LENGTH_SHORT).show();
                 if (!estadoTabuleiro.getEstado().equals(estadoFinal))
                 {
-                    //Toast.makeText(this, "entrei", Toast.LENGTH_SHORT).show();
-                    int i = 0,flag, pos;
-                    flagD = 0; flagE = 0; flagB = 0; flagC = 0; flag = 0;
+                    int pos;
                     pos = buscarIndice0(estadoTabuleiro.getEstado());
                     if (pos != -1)
                     {

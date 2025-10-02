@@ -132,4 +132,30 @@
         android:textColor="#F0F0F0"
         android:textSize="16sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvFuncaoAvaliativa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="200dp"
+        android:fontFamily="casual"
+        android:text="Distância Manhattan"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvNivel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="170dp"
+        android:fontFamily="casual"
+        android:text=" 1º Nível"
+        android:textColor="#F0F0F0"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 </FrameLayout>

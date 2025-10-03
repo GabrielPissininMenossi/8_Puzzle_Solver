@@ -40,6 +40,7 @@ public class A_Estrela_Fragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    static List<Integer> estadoInicial = new ArrayList<>();
     static List<Estado> estadoList = new ArrayList<>();
     static List<Integer> estadoAtual = new ArrayList<>();
     static List<Integer> estadoFinal = new ArrayList<>(Arrays.asList(0,1,2,3,4,5,6,7,8)); // estado final padrão
@@ -49,7 +50,7 @@ public class A_Estrela_Fragment extends Fragment {
     private Tabuleiro ultimoEstado;
     private Puzzle8View puzzle8View;
     private TextView tvEstadoFinal;
-    private Button btEmbaralhar, btBusca_Estrela;
+    private Button btEmbaralhar, btBusca_Estrela, btReset;
     private Long startTime, endTime;
     private int qtdePassos = 0, tamanhoCaminho = 0, flagDistManhattan = 1, flagPecaForaLugar = 0, flagNivel1 = 1, flagNivel2 = 0;
     private TextView tvTempoGasto, tvCaminhoSolucao, tvQtdePassos, tvNivel, tvFuncaoAvaliativa;
@@ -145,12 +146,21 @@ public class A_Estrela_Fragment extends Fragment {
         tvTempoGasto = view.findViewById(R.id.tvTempoGasto);
         tvQtdePassos = view.findViewById(R.id.tvQtdePassos);
         tvNivel = view.findViewById(R.id.tvNivel);
+        btReset = view.findViewById(R.id.btReset);
         tvFuncaoAvaliativa = view.findViewById(R.id.tvFuncaoAvaliativa);
         tvEstadoFinal.setText(estadoFinal.toString());
         btEmbaralhar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 puzzle8View.inicializarEstados();
+            }
+        });
+        btReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                estadoAtual.clear();
+                estadoAtual.addAll(estadoInicial);
+                puzzle8View.trocarEstados();
             }
         });
         btBusca_Estrela.setOnClickListener(new View.OnClickListener() {
@@ -260,6 +270,7 @@ public class A_Estrela_Fragment extends Fragment {
         while (i < estadoList.size())
         {
             estadoAtual.add(estadoList.get(i).getNum());
+            estadoInicial.add(estadoList.get(i).getNum());
             i++;
         }
     }

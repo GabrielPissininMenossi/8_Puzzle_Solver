@@ -50,6 +50,21 @@
         app:rippleColor="@android:color/transparent" />
 
     <Button
+        android:id="@+id/btReset"
+        android:layout_width="110dp"
+        android:layout_height="45dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginLeft="270dp"
+        android:layout_marginBottom="15dp"
+        android:backgroundTint="#2f2c79"
+        android:fontFamily="casual"
+        android:stateListAnimator="@null"
+        android:text="Reset"
+        android:textColor="#F0F0F0"
+        android:textSize="18sp"
+        app:rippleColor="@android:color/transparent" />
+
+    <Button
         android:id="@+id/btBusca_Estrela"
         android:layout_width="110dp"
         android:layout_height="45dp"

@@ -357,9 +357,9 @@ public class BuscasFragment extends Fragment {
     {
         final int TEMPO;
         if (flagA == 1)
-            TEMPO = 100;
+            TEMPO = 400;
         else
-            TEMPO = 100;
+            TEMPO = 200;
         int i =0;
         android.os.Handler handler = new android.os.Handler(mainActivity.getMainLooper());
         while (i < caminho.size())

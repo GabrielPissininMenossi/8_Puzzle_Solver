@@ -2,9 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/it_estrela"
-        android:title="A*" />
-    <item android:title="Item" />
+        android:id="@+id/it_buscas"
+        android:title="Buscas Heurísticas" />
     <item
         android:id="@+id/it_sair"
         android:title="Close" />

@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/it_a"
+        android:title="A*" />
+    <item
+        android:id="@+id/it_bf"
+        android:title="Best-First" />
+    <item
         android:id="@+id/it_distanciaManhattan"
         android:title="Distância Manhattan" />
     <item

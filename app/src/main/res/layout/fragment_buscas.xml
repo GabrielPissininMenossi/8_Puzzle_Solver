@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".A_Estrela_Fragment">
+    tools:context=".BuscasFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="220dp"
@@ -39,7 +39,7 @@
         android:layout_width="110dp"
         android:layout_height="45dp"
         android:layout_gravity="bottom|start"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginBottom="15dp"
         android:backgroundTint="#2f2c79"
         android:fontFamily="casual"
@@ -54,7 +54,7 @@
         android:layout_width="110dp"
         android:layout_height="45dp"
         android:layout_gravity="bottom|start"
-        android:layout_marginLeft="270dp"
+        android:layout_marginLeft="250dp"
         android:layout_marginBottom="15dp"
         android:backgroundTint="#2f2c79"
         android:fontFamily="casual"
@@ -65,11 +65,11 @@
         app:rippleColor="@android:color/transparent" />
 
     <Button
-        android:id="@+id/btBusca_Estrela"
+        android:id="@+id/btBusca"
         android:layout_width="110dp"
         android:layout_height="45dp"
         android:layout_gravity="bottom|start"
-        android:layout_marginLeft="150dp"
+        android:layout_marginLeft="130dp"
         android:layout_marginBottom="15dp"
         android:backgroundTint="#2f2c79"
         android:fontFamily="casual"

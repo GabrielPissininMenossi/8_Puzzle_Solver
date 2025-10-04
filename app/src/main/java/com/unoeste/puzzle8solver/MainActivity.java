@@ -1,16 +1,8 @@
 package com.unoeste.puzzle8solver;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -27,11 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -41,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private Toolbar toolbar;
-    private A_Estrela_Fragment aEstrelaFragment = new A_Estrela_Fragment();
+    private BuscasFragment buscasFragment = new BuscasFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigationView.setNavigationItemSelectedListener(item -> {
 
-            if (item.getItemId() == R.id.it_estrela)
+            if (item.getItemId() == R.id.it_buscas)
             {
                 fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(frameLayout.getId(), aEstrelaFragment);
+                fragmentTransaction.replace(frameLayout.getId(), buscasFragment);
                 fragmentTransaction.commit();
             }
             if (item.getItemId() == R.id.it_sair)

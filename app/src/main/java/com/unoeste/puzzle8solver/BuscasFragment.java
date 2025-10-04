@@ -27,10 +27,10 @@ import java.util.PriorityQueue;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link A_Estrela_Fragment#newInstance} factory method to
+ * Use the {@link BuscasFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class A_Estrela_Fragment extends Fragment {
+public class BuscasFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,14 +50,13 @@ public class A_Estrela_Fragment extends Fragment {
     private Tabuleiro ultimoEstado;
     private Puzzle8View puzzle8View;
     private TextView tvEstadoFinal;
-    private Button btEmbaralhar, btBusca_Estrela, btReset;
+    private Button btEmbaralhar, btBusca, btReset;
     private Long startTime, endTime;
-    private int qtdePassos = 0, tamanhoCaminho = 0, flagDistManhattan = 1, flagPecaForaLugar = 0, flagNivel1 = 1, flagNivel2 = 0;
+    private int qtdePassos = 0, tamanhoCaminho = 0, flagDistManhattan = 1, flagPecaForaLugar = 0, flagNivel1 = 1, flagNivel2 = 0, flagBF = 0, flagA = 1;
     private TextView tvTempoGasto, tvCaminhoSolucao, tvQtdePassos, tvNivel, tvFuncaoAvaliativa;
-    private final int TEMPO = 500;
     MainActivity mainActivity;
 
-    public A_Estrela_Fragment() {
+    public BuscasFragment() {
         // Required empty public constructor
     }
 
@@ -70,8 +69,8 @@ public class A_Estrela_Fragment extends Fragment {
      * @return A new instance of fragment A_Estrela_Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static A_Estrela_Fragment newInstance(String param1, String param2) {
-        A_Estrela_Fragment fragment = new A_Estrela_Fragment();
+    public static BuscasFragment newInstance(String param1, String param2) {
+        BuscasFragment fragment = new BuscasFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -116,6 +115,18 @@ public class A_Estrela_Fragment extends Fragment {
             flagDistManhattan = 0;
             tvFuncaoAvaliativa.setText("Peças Fora do Lugar");
         }
+        if(item.getItemId() == R.id.it_bf)
+        {
+            flagBF = 1;
+            flagA = 0;
+            btBusca.setText("Best-Fi");
+        }
+        if(item.getItemId() == R.id.it_a)
+        {
+            flagA = 1;
+            flagBF = 0;
+            btBusca.setText("A*");
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -137,11 +148,11 @@ public class A_Estrela_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_a__estrela_, container, false);
+        View view = inflater.inflate(R.layout.fragment_buscas, container, false);
         puzzle8View = view.findViewById(R.id.puzzle8View);
         tvEstadoFinal = view.findViewById(R.id.tvEstadoFinal);
         btEmbaralhar = view.findViewById(R.id.btEmbaralhar);
-        btBusca_Estrela = view.findViewById(R.id.btBusca_Estrela);
+        btBusca = view.findViewById(R.id.btBusca);
         tvCaminhoSolucao = view.findViewById(R.id.tvCaminhoSolucao);
         tvTempoGasto = view.findViewById(R.id.tvTempoGasto);
         tvQtdePassos = view.findViewById(R.id.tvQtdePassos);
@@ -158,15 +169,14 @@ public class A_Estrela_Fragment extends Fragment {
         btReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                estadoAtual.clear();
-                estadoAtual.addAll(estadoInicial);
-                puzzle8View.trocarEstados();
+                atualizarEstados(estadoInicial);
             }
         });
-        btBusca_Estrela.setOnClickListener(new View.OnClickListener() {
+        btBusca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //fila.clear();
+                estadoInicial.clear();
                 filaHeap.clear();
                 estadoAtual.clear();
                 caminho.clear();
@@ -176,12 +186,17 @@ public class A_Estrela_Fragment extends Fragment {
                 inicializarEstadoInicial();
                 if (isSolucionavel(estadoAtual))
                 {
-                    btBusca_Estrela.setVisibility(View.INVISIBLE);
+                    btBusca.setVisibility(View.INVISIBLE);
                     btEmbaralhar.setVisibility(View.INVISIBLE);
+                    btReset.setVisibility(View.INVISIBLE);
                     Toast.makeText(v.getContext(), "Searching Solution...", Toast.LENGTH_SHORT).show();
                     new Thread(() -> {
 
-                        buscaA_Estrela();
+                        if (flagNivel1 == 1)
+                            buscaHeuristicaNivel1();
+                        else
+                        if (flagNivel2 == 1)
+                            buscaHeuristicaNivel2();
                         mainActivity.runOnUiThread(() -> {
                             if (ultimoEstado != null) // solucao encontrada
                             {
@@ -196,7 +211,7 @@ public class A_Estrela_Fragment extends Fragment {
                             else
                             {
                                 Toast.makeText(v.getContext(), "No Solution", Toast.LENGTH_SHORT).show();
-                                btBusca_Estrela.setVisibility(View.VISIBLE);
+                                btBusca.setVisibility(View.VISIBLE);
                             }
 
                         });
@@ -340,6 +355,11 @@ public class A_Estrela_Fragment extends Fragment {
     }
     private void animarSolucao()
     {
+        final int TEMPO;
+        if (flagA == 1)
+            TEMPO = 500;
+        else
+            TEMPO = 200;
         int i =0;
         android.os.Handler handler = new android.os.Handler(mainActivity.getMainLooper());
         while (i < caminho.size())
@@ -352,18 +372,20 @@ public class A_Estrela_Fragment extends Fragment {
                 atualizarEstados(tabuleiro.getEstado());
                 if (passo == caminho.size() - 1)
                 {
-                    btBusca_Estrela.setVisibility(View.VISIBLE);
+                    btBusca.setVisibility(View.VISIBLE);
                     btEmbaralhar.setVisibility(View.VISIBLE);
+                    btReset.setVisibility(View.VISIBLE);
                 }
             }, (long) i * TEMPO);
             i++;
         }
     }
-    private void expandirLista(List<Integer> novaLista, Tabuleiro pai, List<Tabuleiro> visitado)
+    private Tabuleiro expandirLista(List<Integer> novaLista, Tabuleiro pai, List<Tabuleiro> visitado)
     {
         Tabuleiro novoEstadoTabuleiro = new Tabuleiro(novaLista);
         if (!foiVisitado(visitado, novoEstadoTabuleiro))
         {
+
             novoEstadoTabuleiro.setPai(pai);
             novoEstadoTabuleiro.setG(pai.getG() + 1);
             if (flagDistManhattan == 1)
@@ -371,13 +393,25 @@ public class A_Estrela_Fragment extends Fragment {
                 novoEstadoTabuleiro.setH(calcularDistanciaManhattan(novoEstadoTabuleiro.getEstado()));
             }
             else
+            if (flagPecaForaLugar == 1)
             {
-                novoEstadoTabuleiro.setH(contarPecasFora( novoEstadoTabuleiro.getEstado()));
+                novoEstadoTabuleiro.setH(contarPecasFora(novoEstadoTabuleiro.getEstado()));
             }
-            novoEstadoTabuleiro.setF(novoEstadoTabuleiro.getG() + novoEstadoTabuleiro.getH());
-            //insercaoDiretaPrioridade(novoEstadoTabuleiro);
+
+            if (flagA == 1)
+            {
+                novoEstadoTabuleiro.setF(novoEstadoTabuleiro.getG() + novoEstadoTabuleiro.getH());
+            }
+            else
+            if (flagBF == 1)
+            {
+                novoEstadoTabuleiro.setF(novoEstadoTabuleiro.getH());
+            }
+
             filaHeap.add(novoEstadoTabuleiro);
+            return novoEstadoTabuleiro;
         }
+        return null;
 
     }
 
@@ -431,7 +465,7 @@ public class A_Estrela_Fragment extends Fragment {
         }
         return total;
     }
-    private void buscaA_Estrela()
+    private void buscaHeuristicaNivel1()
     {
         startTime = System.currentTimeMillis();
         List<Tabuleiro> visitados = new ArrayList<>();
@@ -442,13 +476,24 @@ public class A_Estrela_Fragment extends Fragment {
             estadoTabuleiro.setH(calcularDistanciaManhattan(estadoTabuleiro.getEstado()));
         }
         else
+        if (flagPecaForaLugar == 1)
         {
             estadoTabuleiro.setH(contarPecasFora(estadoTabuleiro.getEstado()));
         }
+
         estadoTabuleiro.setG(0);
-        estadoTabuleiro.setF(estadoTabuleiro.getG() + estadoTabuleiro.getH());
+
+        if (flagA == 1)
+        {
+            estadoTabuleiro.setF(estadoTabuleiro.getG() + estadoTabuleiro.getH());
+        }
+        else
+        if (flagBF == 1)
+        {
+            estadoTabuleiro.setF(estadoTabuleiro.getH());
+        }
+
         estadoTabuleiro.setPai(null);
-        //insercaoDiretaPrioridade(estadoTabuleiro);
         filaHeap.add(estadoTabuleiro);
         while (!filaHeap.isEmpty() && flagFim != 1)
         {
@@ -472,6 +517,7 @@ public class A_Estrela_Fragment extends Fragment {
                             aux.set(pos - 3, 0);
                             aux.set(pos, auxNum);
                             expandirLista(aux, estadoTabuleiro, visitados);
+
                         }
                         if (pos <= 5) // existe posicao para baixo
                         {
@@ -480,6 +526,7 @@ public class A_Estrela_Fragment extends Fragment {
                             aux.set(pos + 3, 0);
                             aux.set(pos, auxNum);
                             expandirLista(aux, estadoTabuleiro, visitados);
+
                         }
                         if ((pos + 1) % 3 != 0 )
                         {
@@ -488,6 +535,7 @@ public class A_Estrela_Fragment extends Fragment {
                             aux.set(pos + 1, 0);
                             aux.set(pos, auxNum);
                             expandirLista(aux, estadoTabuleiro, visitados);
+
                         }
                         if(pos % 3 != 0 )
                         {
@@ -496,6 +544,153 @@ public class A_Estrela_Fragment extends Fragment {
                             aux.set(pos - 1, 0);
                             aux.set(pos, auxNum);
                             expandirLista(aux, estadoTabuleiro, visitados);
+
+                        }
+
+                    }
+                }
+                else
+                {
+                    flagFim = 1;
+                    ultimoEstado = estadoTabuleiro;
+                }
+            }
+
+        }
+        endTime = System.currentTimeMillis();
+
+    }
+    void expandirNeto(Tabuleiro filho, List<Tabuleiro> visitados)
+    {
+        int auxNum, pos;
+        pos = buscarIndice0(filho.getEstado());
+        if (pos != -1)
+        {
+            if (pos >= 3)
+            {
+                List<Integer> neto = new ArrayList<>(filho.getEstado());
+                auxNum = neto.get(pos - 3);
+                neto.set(pos - 3, 0);
+                neto.set(pos, auxNum);
+                expandirLista(neto, filho, visitados);
+            }
+            if (pos <= 5)
+            {
+                List<Integer> neto = new ArrayList<>(filho.getEstado());
+                auxNum = neto.get(pos + 3);
+                neto.set(pos + 3, 0);
+                neto.set(pos, auxNum);
+                expandirLista(neto, filho, visitados);
+            }
+            if ((pos + 1) % 3 != 0 )
+            {
+                List<Integer> neto = new ArrayList<>(filho.getEstado());
+                auxNum = neto.get(pos + 1);
+                neto.set(pos + 1, 0);
+                neto.set(pos, auxNum);
+                expandirLista(neto, filho, visitados);
+            }
+            if (pos % 3 != 0)
+            {
+                List<Integer> neto = new ArrayList<>(filho.getEstado());
+                auxNum = neto.get(pos - 1);
+                neto.set(pos - 1, 0);
+                neto.set(pos, auxNum);
+                expandirLista(neto, filho, visitados);
+            }
+        }
+
+    }
+    private void buscaHeuristicaNivel2()
+    {
+        startTime = System.currentTimeMillis();
+        List<Tabuleiro> visitados = new ArrayList<>();
+        int flagFim = 0;
+        Tabuleiro estadoTabuleiro = new Tabuleiro(estadoAtual);
+        if (flagDistManhattan == 1)
+        {
+            estadoTabuleiro.setH(calcularDistanciaManhattan(estadoTabuleiro.getEstado()));
+        }
+        else
+        {
+            estadoTabuleiro.setH(contarPecasFora(estadoTabuleiro.getEstado()));
+        }
+        estadoTabuleiro.setG(0);
+        if (flagA == 1)
+        {
+            estadoTabuleiro.setF(estadoTabuleiro.getG() + estadoTabuleiro.getH());
+        }
+        else
+        if (flagBF == 1)
+        {
+            estadoTabuleiro.setF(estadoTabuleiro.getH());
+        }
+        estadoTabuleiro.setPai(null);
+        filaHeap.add(estadoTabuleiro);
+        while (!filaHeap.isEmpty() && flagFim != 1)
+        {
+            estadoTabuleiro = filaHeap.poll();
+            if (!foiVisitado(visitados, estadoTabuleiro))
+            {
+                visitados.add(estadoTabuleiro);
+                qtdePassos++;
+                if (!estadoTabuleiro.getEstado().equals(estadoFinal))
+                {
+                    int pos;
+                    pos = buscarIndice0(estadoTabuleiro.getEstado());
+                    if (pos != -1)
+                    {
+                        int auxNum;
+
+                        if (pos >= 3) // existe posica para cima
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos - 3);
+                            aux.set(pos - 3, 0);
+                            aux.set(pos, auxNum);
+                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
+                            if (filho != null)
+                            {
+                                expandirNeto(filho, visitados);
+                            }
+                        }
+                        if (pos <= 5) // existe posicao para baixo
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos + 3);
+                            aux.set(pos + 3, 0);
+                            aux.set(pos, auxNum);
+                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
+                            if (filho != null)
+                            {
+                                expandirNeto(filho, visitados);
+                            }
+
+                        }
+                        if ((pos + 1) % 3 != 0 )
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos + 1);
+                            aux.set(pos + 1, 0);
+                            aux.set(pos, auxNum);
+                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
+                            if (filho != null)
+                            {
+                                expandirNeto(filho, visitados);
+                            }
+
+                        }
+                        if(pos % 3 != 0 )
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos - 1);
+                            aux.set(pos - 1, 0);
+                            aux.set(pos, auxNum);
+                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
+                            if (filho != null)
+                            {
+                                expandirNeto(filho, visitados);
+                            }
                         }
 
                     }

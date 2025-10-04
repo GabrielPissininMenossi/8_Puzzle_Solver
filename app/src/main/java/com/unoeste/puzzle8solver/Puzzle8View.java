@@ -56,13 +56,13 @@ public class Puzzle8View extends View
         int i = 0, linha, coluna;
         float x, y;
         Estado estado;
-        while (i < A_Estrela_Fragment.estadoList.size())
+        while (i < BuscasFragment.estadoList.size())
         {
             linha = i / 3;
             coluna = i % 3;
             x = largura + (coluna * lado);
             y = altura + (linha * lado);
-            estado = A_Estrela_Fragment.estadoList.get(i);
+            estado = BuscasFragment.estadoList.get(i);
             if (estado.getNum() != 0)
             {
                 canvas.drawRect(x, y, x + lado, y + lado, paint);
@@ -75,7 +75,7 @@ public class Puzzle8View extends View
     }
     public void inicializarEstados()
     {
-        A_Estrela_Fragment.estadoList.clear();
+        BuscasFragment.estadoList.clear();
         int num;
         Estado estado;
         float x, y;
@@ -95,7 +95,7 @@ public class Puzzle8View extends View
                 x = largura + (j * lado); // coluna
                 y = altura + (i * lado); // linha
                 estado = new Estado(x,y, num);
-                A_Estrela_Fragment.estadoList.add(estado);
+                BuscasFragment.estadoList.add(estado);
             }
         }
         invalidate();
@@ -103,27 +103,27 @@ public class Puzzle8View extends View
     private Estado buscarEstado(int num)
     {
         int i = 0;
-        while (i < A_Estrela_Fragment.estadoList.size() && A_Estrela_Fragment.estadoList.get(i).getNum() != num)
+        while (i < BuscasFragment.estadoList.size() && BuscasFragment.estadoList.get(i).getNum() != num)
             i++;
-        if (i < A_Estrela_Fragment.estadoList.size()) // achou
-            return A_Estrela_Fragment.estadoList.get(i);
+        if (i < BuscasFragment.estadoList.size()) // achou
+            return BuscasFragment.estadoList.get(i);
         else
             return null;
     }
     public void trocarEstados()
     {
         int i = 0, pos;
-        while (i < A_Estrela_Fragment.estadoAtual.size())
+        while (i < BuscasFragment.estadoAtual.size())
         {
-            if (A_Estrela_Fragment.estadoList.get(i).getNum() != A_Estrela_Fragment.estadoAtual.get(i)) // se for diferente, preciso trocar
+            if (BuscasFragment.estadoList.get(i).getNum() != BuscasFragment.estadoAtual.get(i)) // se for diferente, preciso trocar
             {
-                Estado aux = buscarEstado(A_Estrela_Fragment.estadoAtual.get(i));
+                Estado aux = buscarEstado(BuscasFragment.estadoAtual.get(i));
 
                 if (aux != null)
                 {
-                    pos = A_Estrela_Fragment.estadoList.indexOf(aux);
-                    A_Estrela_Fragment.estadoList.set(pos, A_Estrela_Fragment.estadoList.get(i));
-                    A_Estrela_Fragment.estadoList.set(i, aux);
+                    pos = BuscasFragment.estadoList.indexOf(aux);
+                    BuscasFragment.estadoList.set(pos, BuscasFragment.estadoList.get(i));
+                    BuscasFragment.estadoList.set(i, aux);
                 }
             }
             i++;

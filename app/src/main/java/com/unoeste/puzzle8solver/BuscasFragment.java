@@ -357,9 +357,9 @@ public class BuscasFragment extends Fragment {
     {
         final int TEMPO;
         if (flagA == 1)
-            TEMPO = 500;
+            TEMPO = 100;
         else
-            TEMPO = 200;
+            TEMPO = 100;
         int i =0;
         android.os.Handler handler = new android.os.Handler(mainActivity.getMainLooper());
         while (i < caminho.size())
@@ -519,20 +519,12 @@ public class BuscasFragment extends Fragment {
                             expandirLista(aux, estadoTabuleiro, visitados);
 
                         }
+
                         if (pos <= 5) // existe posicao para baixo
                         {
                             List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
                             auxNum = aux.get(pos + 3);
                             aux.set(pos + 3, 0);
-                            aux.set(pos, auxNum);
-                            expandirLista(aux, estadoTabuleiro, visitados);
-
-                        }
-                        if ((pos + 1) % 3 != 0 )
-                        {
-                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
-                            auxNum = aux.get(pos + 1);
-                            aux.set(pos + 1, 0);
                             aux.set(pos, auxNum);
                             expandirLista(aux, estadoTabuleiro, visitados);
 
@@ -546,7 +538,15 @@ public class BuscasFragment extends Fragment {
                             expandirLista(aux, estadoTabuleiro, visitados);
 
                         }
+                        if ((pos + 1) % 3 != 0 )
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos + 1);
+                            aux.set(pos + 1, 0);
+                            aux.set(pos, auxNum);
+                            expandirLista(aux, estadoTabuleiro, visitados);
 
+                        }
                     }
                 }
                 else
@@ -582,19 +582,19 @@ public class BuscasFragment extends Fragment {
                 neto.set(pos, auxNum);
                 expandirLista(neto, filho, visitados);
             }
-            if ((pos + 1) % 3 != 0 )
-            {
-                List<Integer> neto = new ArrayList<>(filho.getEstado());
-                auxNum = neto.get(pos + 1);
-                neto.set(pos + 1, 0);
-                neto.set(pos, auxNum);
-                expandirLista(neto, filho, visitados);
-            }
             if (pos % 3 != 0)
             {
                 List<Integer> neto = new ArrayList<>(filho.getEstado());
                 auxNum = neto.get(pos - 1);
                 neto.set(pos - 1, 0);
+                neto.set(pos, auxNum);
+                expandirLista(neto, filho, visitados);
+            }
+            if ((pos + 1) % 3 != 0 )
+            {
+                List<Integer> neto = new ArrayList<>(filho.getEstado());
+                auxNum = neto.get(pos + 1);
+                neto.set(pos + 1, 0);
                 neto.set(pos, auxNum);
                 expandirLista(neto, filho, visitados);
             }
@@ -667,6 +667,18 @@ public class BuscasFragment extends Fragment {
                             }
 
                         }
+                        if(pos % 3 != 0 )
+                        {
+                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
+                            auxNum = aux.get(pos - 1);
+                            aux.set(pos - 1, 0);
+                            aux.set(pos, auxNum);
+                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
+                            if (filho != null)
+                            {
+                                expandirNeto(filho, visitados);
+                            }
+                        }
                         if ((pos + 1) % 3 != 0 )
                         {
                             List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
@@ -679,18 +691,6 @@ public class BuscasFragment extends Fragment {
                                 expandirNeto(filho, visitados);
                             }
 
-                        }
-                        if(pos % 3 != 0 )
-                        {
-                            List<Integer> aux = new ArrayList<>(estadoTabuleiro.getEstado());
-                            auxNum = aux.get(pos - 1);
-                            aux.set(pos - 1, 0);
-                            aux.set(pos, auxNum);
-                            Tabuleiro filho = expandirLista(aux, estadoTabuleiro, visitados); // retorna o pai do neto
-                            if (filho != null)
-                            {
-                                expandirNeto(filho, visitados);
-                            }
                         }
 
                     }

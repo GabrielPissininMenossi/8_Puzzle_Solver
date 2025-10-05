@@ -306,18 +306,28 @@ public class BuscasFragment extends Fragment {
             }
         }
     }
+
     private void insercaoDiretaPrioridade(Tabuleiro novo)
     {
-        fila.add(novo);
-        int i = fila.size() - 1;
-        Tabuleiro aux;
-        while (i > 0 && fila.get(i).getF() < fila.get(i - 1).getF())
-        {
-            aux = fila.get(i);
-            fila.set(i, fila.get(i-1));
-            fila.set(i - 1, aux);
-            i--;
 
+        if (fila.isEmpty())
+        {
+            fila.add(novo);
+
+        }
+        else
+        if (fila.get(0).getF() > novo.getF())
+        {
+            fila.add(0, novo);
+        }
+        else
+        {
+            int i = 1;
+            while (i < fila.size() && fila.get(i).getF() < novo.getF())
+            {
+                i++;
+            }
+            fila.add(i, novo);
         }
     }
     private int buscarIndice0(List<Integer> lista)
@@ -409,6 +419,7 @@ public class BuscasFragment extends Fragment {
             }
 
             filaHeap.add(novoEstadoTabuleiro);
+            //insercaoDiretaPrioridade(novoEstadoTabuleiro);
             return novoEstadoTabuleiro;
         }
         return null;
@@ -495,8 +506,10 @@ public class BuscasFragment extends Fragment {
 
         estadoTabuleiro.setPai(null);
         filaHeap.add(estadoTabuleiro);
+        //insercaoDiretaPrioridade(estadoTabuleiro);
         while (!filaHeap.isEmpty() && flagFim != 1)
         {
+            //estadoTabuleiro = fila.remove(0);
             estadoTabuleiro = filaHeap.poll();
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
@@ -627,9 +640,11 @@ public class BuscasFragment extends Fragment {
         }
         estadoTabuleiro.setPai(null);
         filaHeap.add(estadoTabuleiro);
+        //insercaoDiretaPrioridade(estadoTabuleiro);
         while (!filaHeap.isEmpty() && flagFim != 1)
         {
             estadoTabuleiro = filaHeap.poll();
+            //estadoTabuleiro = fila.remove(0);
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
                 visitados.add(estadoTabuleiro);

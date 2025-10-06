@@ -21,9 +21,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -351,6 +353,10 @@ public class BuscasFragment extends Fragment {
         }
         return false;
     }
+    private boolean foiVisitado(Set<List<Integer>> visitados, Tabuleiro novoTabuleiro)
+    {
+        return visitados.contains(novoTabuleiro.getEstado());
+    }
     private void caminhoSolucao()
     {
         Tabuleiro aux;
@@ -390,7 +396,7 @@ public class BuscasFragment extends Fragment {
             i++;
         }
     }
-    private Tabuleiro expandirLista(List<Integer> novaLista, Tabuleiro pai, List<Tabuleiro> visitado)
+    private Tabuleiro expandirLista(List<Integer> novaLista, Tabuleiro pai, Set<List<Integer>> visitado)
     {
         Tabuleiro novoEstadoTabuleiro = new Tabuleiro(novaLista);
         if (!foiVisitado(visitado, novoEstadoTabuleiro))
@@ -479,7 +485,8 @@ public class BuscasFragment extends Fragment {
     private void buscaHeuristicaNivel1()
     {
         startTime = System.currentTimeMillis();
-        List<Tabuleiro> visitados = new ArrayList<>();
+        //List<Tabuleiro> visitados = new ArrayList<>(); // O(n)
+        Set<List<Integer>> visitados = new HashSet<>(); // O(1)
         int flagFim = 0;
         Tabuleiro estadoTabuleiro = new Tabuleiro(estadoAtual);
         if (flagDistManhattan == 1)
@@ -513,7 +520,7 @@ public class BuscasFragment extends Fragment {
             estadoTabuleiro = filaHeap.poll();
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
-                visitados.add(estadoTabuleiro);
+                visitados.add(estadoTabuleiro.getEstado());
                 qtdePassos++;
                 if (!estadoTabuleiro.getEstado().equals(estadoFinal))
                 {
@@ -573,7 +580,7 @@ public class BuscasFragment extends Fragment {
         endTime = System.currentTimeMillis();
 
     }
-    void expandirNeto(Tabuleiro filho, List<Tabuleiro> visitados)
+    void expandirNeto(Tabuleiro filho, Set<List<Integer>> visitados)
     {
         int auxNum, pos;
         pos = buscarIndice0(filho.getEstado());
@@ -617,7 +624,8 @@ public class BuscasFragment extends Fragment {
     private void buscaHeuristicaNivel2()
     {
         startTime = System.currentTimeMillis();
-        List<Tabuleiro> visitados = new ArrayList<>();
+        //List<Tabuleiro> visitados = new ArrayList<>(); // O(n)
+        Set<List<Integer>> visitados = new HashSet<>(); // O(1)
         int flagFim = 0;
         Tabuleiro estadoTabuleiro = new Tabuleiro(estadoAtual);
         if (flagDistManhattan == 1)
@@ -647,7 +655,7 @@ public class BuscasFragment extends Fragment {
             //estadoTabuleiro = fila.remove(0);
             if (!foiVisitado(visitados, estadoTabuleiro))
             {
-                visitados.add(estadoTabuleiro);
+                visitados.add(estadoTabuleiro.getEstado());
                 qtdePassos++;
                 if (!estadoTabuleiro.getEstado().equals(estadoFinal))
                 {

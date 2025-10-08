@@ -186,7 +186,7 @@ public class BuscasFragment extends Fragment {
                 qtdePassos = 0;
                 tamanhoCaminho = 0;
                 inicializarEstadoInicial();
-                if (isSolucionavel(estadoAtual))
+                if (isSolucionavel())
                 {
                     btBusca.setVisibility(View.INVISIBLE);
                     btEmbaralhar.setVisibility(View.INVISIBLE);
@@ -432,7 +432,7 @@ public class BuscasFragment extends Fragment {
 
     }
 
-    private boolean isSolucionavel(List<Integer> estado)
+    private int contarInversoes(List<Integer> estado)
     {
         int inversoes = 0;
 
@@ -451,7 +451,13 @@ public class BuscasFragment extends Fragment {
             }
         }
 
-        return (inversoes % 2 == 0);
+        return inversoes;
+    }
+    private boolean isSolucionavel()
+    {
+        int inversoesIniciais = contarInversoes(estadoInicial);
+        int inversoesFinais = contarInversoes(estadoFinal);
+        return (inversoesIniciais % 2 == inversoesFinais % 2);
     }
     private int buscaPonto(int numero)
     {
